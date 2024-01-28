@@ -1,31 +1,15 @@
-import 'dart:async';
-
-import 'package:flame/components.dart';
+import 'package:flame/flame.dart';
 import 'package:flame/game.dart';
+import 'package:flame_study/pixel_adventure.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(GameWidget(game: MyGame()));
-}
+  WidgetsFlutterBinding.ensureInitialized();
 
-class MyGame extends FlameGame {
-  SpriteComponent girl = SpriteComponent();
+  Flame.device.fullScreen();
+  Flame.device.setLandscape();
 
-  @override
-  FutureOr<void> onLoad() async {
-    print("Screen size is $size");
-
-    girl
-      ..sprite = await loadSprite("image.png")
-      ..size = Vector2(100, 100)
-      ..y = 100;
-
-    add(girl);
-  }
-
-  @override
-  void update(double dt) {
-    super.update(dt);
-
-  }
+  final game = PixelAdventure();
+  runApp(GameWidget(game: kDebugMode ? PixelAdventure() : game));
 }
