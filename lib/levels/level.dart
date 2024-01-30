@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flame/components.dart';
+import 'package:flame_study/collisions/collision_block.dart';
 import 'package:flame_study/player/model/player_model.dart';
 import 'package:flame_study/player/player_component.dart';
 import 'package:flame_tiled/flame_tiled.dart';
@@ -29,6 +30,28 @@ class Level extends World {
         position: Vector2(playerSpawnPoint.x, playerSpawnPoint.y),
       ),
     );
+
+    final collisionsLayerObjects =
+        level.tileMap.getLayer<ObjectGroup>("Collisions")?.objects ?? [];
+
+    final solidBlocks = collisionsLayerObjects.where((e) => e.class_ == "soild").map(
+          (e) => CollisionBlock(
+            position: Vector2(e.x, e.y),
+            size: Vector2(e.width, e.height),
+            isPlatform: false,
+          ),
+        );
+    addAll(solidBlocks);
+
+    final platformBlocks = collisionsLayerObjects.where((e) => e.class_ == "Platform").map(
+          (e) => CollisionBlock(
+        position: Vector2(e.x, e.y),
+        size: Vector2(e.width, e.height),
+        isPlatform: false,
+      ),
+    );
+    addAll(platformBlocks);
+
     return super.onLoad();
   }
 }
