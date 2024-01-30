@@ -13,8 +13,19 @@ class Level extends World {
     level = await TiledComponent.load('Level-01.tmx', Vector2.all(16));
 
     add(level);
-    add(PlayerComponent(player: MaskDude()));
 
+    final spawnPointsLayerObjects =
+        level.tileMap.getLayer<ObjectGroup>("Spawnpoints")?.objects ?? [];
+
+    final playerSpawnPoint = spawnPointsLayerObjects.firstWhere(
+      (e) => e.class_ == 'Player',
+    );
+    add(
+      PlayerComponent(
+        player: MaskDude(),
+        position: Vector2(playerSpawnPoint.x, playerSpawnPoint.y),
+      ),
+    );
     return super.onLoad();
   }
 }

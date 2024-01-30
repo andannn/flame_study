@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="git" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="2" nextobjectid="1">
+<map version="1.10" tiledversion="git" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="3" nextobjectid="12">
  <tileset firstgid="1" source="pixel_advenure.tsx"/>
  <layer id="1" name="BackGround" width="40" height="23">
   <data encoding="csv">
@@ -28,4 +28,7 @@
 24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24
 </data>
  </layer>
+ <objectgroup id="2" name="Spawnpoints">
+  <object id="2" name="Player" type="Player" x="346.479" y="136.806" width="31.4557" height="32" rotation="359.869"/>
+ </objectgroup>
 </map>

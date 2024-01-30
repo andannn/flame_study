@@ -13,7 +13,7 @@ class PlayerComponent
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
 
-  PlayerComponent({required this.player});
+  PlayerComponent({Vector2? position, required this.player}): super(position: position);
 
   @override
   FutureOr<void> onLoad() async {
