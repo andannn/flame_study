@@ -6,7 +6,10 @@ import 'package:flame_study/player/player_component.dart';
 import 'package:flame_tiled/flame_tiled.dart';
 
 class Level extends World {
+  Level({required this.playerModel});
+
   late TiledComponent level;
+  final PlayerModel playerModel;
 
   @override
   FutureOr<void> onLoad() async {
@@ -22,7 +25,7 @@ class Level extends World {
     );
     add(
       PlayerComponent(
-        player: MaskDude(),
+        player: playerModel,
         position: Vector2(playerSpawnPoint.x, playerSpawnPoint.y),
       ),
     );
