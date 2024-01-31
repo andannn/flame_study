@@ -41,7 +41,7 @@ class Level extends World {
           (e) => CollisionBlock(
         position: Vector2(e.x, e.y),
         size: Vector2(e.width, e.height),
-        isPlatform: false,
+        isPlatform: true,
       ),
     );
     addAll(platformBlocks);

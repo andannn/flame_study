@@ -14,6 +14,8 @@ class ApplyGravity extends PlayerEvent {}
 
 class LandGround extends PlayerEvent {}
 
+class ReachCeiling extends PlayerEvent {}
+
 enum PlayerDirection {
   left,
   right,
@@ -26,13 +28,14 @@ sealed class PlayerModel {
   PlayerResource get playerResource;
 
   final double moveSpeed = 180;
-  final double gravity = 9.8;
-  final double jumpForceVelocity = 460;
+  final double gravity = 15.8;
+  final double jumpForceVelocity = 360;
   final double terminalVelocity = 300;
 
   PlayerDirection playerDirection = PlayerDirection.none;
   bool isFacingRight = true;
   double verticalVelocity = 0;
+  bool isJumping = false;
 
   void onEvent(PlayerEvent event) {
     switch (event) {
@@ -41,6 +44,14 @@ sealed class PlayerModel {
             .clamp(-jumpForceVelocity, terminalVelocity);
       case LandGround():
         verticalVelocity = 0;
+        isJumping = false;
+      case ReachCeiling():
+        verticalVelocity = 0;
+      case Jump():
+        if (!isJumping) {
+          verticalVelocity += -jumpForceVelocity;
+          isJumping = true;
+        }
       case MoveLeft():
         playerDirection = PlayerDirection.left;
         isFacingRight = false;
@@ -49,8 +60,6 @@ sealed class PlayerModel {
         isFacingRight = true;
       case MoveStop():
         playerDirection = PlayerDirection.none;
-
-      case Jump():
     }
   }
 }
@@ -70,6 +79,7 @@ class MaskDude extends PlayerModel {
 
 extension PlayerModelEx on PlayerModel {
   bool get isFalling => verticalVelocity > 0;
+  bool get isRising => verticalVelocity < 0;
 
   double get horizonVelocity {
     switch (playerDirection) {
@@ -83,6 +93,12 @@ extension PlayerModelEx on PlayerModel {
   }
 
   PlayerAnimationState get currentAnimationState {
+    if (isJumping && isRising) {
+      return PlayerAnimationState.jump;
+    } else if (isJumping && isFalling) {
+      return PlayerAnimationState.fail;
+    }
+
     if (playerDirection == PlayerDirection.none) {
       return PlayerAnimationState.idle;
     } else {

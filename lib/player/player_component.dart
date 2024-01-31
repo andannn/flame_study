@@ -30,7 +30,8 @@ class PlayerComponent
 
   @override
   FutureOr<void> onLoad() async {
-    _loadAllAnimations();
+    animations = player.playerResource.getAnimationMap(game.images);
+    current = player.currentAnimationState;
   }
 
   @override
@@ -51,7 +52,7 @@ class PlayerComponent
     // resolve y position by checking collisions.
     _resolveVerticalPosition();
 
-    _updatePlayeAnimationState(dt);
+    _updatePlayerAnimationState(dt);
   }
 
   @override
@@ -61,6 +62,8 @@ class PlayerComponent
     final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
         keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
+    final isJumpPressed = keysPressed.contains(LogicalKeyboardKey.space) && event.repeat == false;
+
     if (isLeftKeyPressed) {
       player.onEvent(MoveLeft());
     } else if (isRightKeyPressed) {
@@ -69,16 +72,14 @@ class PlayerComponent
       player.onEvent(MoveStop());
     }
 
+    if (isJumpPressed) {
+      player.onEvent(Jump());
+    }
+
     return super.onKeyEvent(event, keysPressed);
   }
 
-  void _loadAllAnimations() {
-    animations = player.playerResource.getAnimationMap(game.images);
-
-    current = player.currentAnimationState;
-  }
-
-  void _updatePlayeAnimationState(double dt) {
+  void _updatePlayerAnimationState(double dt) {
     final animation = player.currentAnimationState;
     current = animation;
 
@@ -110,6 +111,10 @@ class PlayerComponent
       player.onEvent(LandGround());
 
       position.y = block.y - height;
+    } else if (player.isRising) {
+      player.onEvent(ReachCeiling());
+
+      position.y = block.y + block.height;
     }
   }
 
