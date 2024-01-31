@@ -10,6 +10,10 @@ class MoveStop extends PlayerEvent {}
 
 class Jump extends PlayerEvent {}
 
+class ApplyGravity extends PlayerEvent {}
+
+class LandGround extends PlayerEvent {}
+
 enum PlayerDirection {
   left,
   right,
@@ -21,14 +25,22 @@ sealed class PlayerModel {
 
   PlayerResource get playerResource;
 
-  double moveSpeed = 180;
+  final double moveSpeed = 180;
+  final double gravity = 9.8;
+  final double jumpForceVelocity = 460;
+  final double terminalVelocity = 300;
 
   PlayerDirection playerDirection = PlayerDirection.none;
-
   bool isFacingRight = true;
+  double verticalVelocity = 0;
 
   void onEvent(PlayerEvent event) {
     switch (event) {
+      case ApplyGravity():
+        verticalVelocity = (verticalVelocity + gravity)
+            .clamp(-jumpForceVelocity, terminalVelocity);
+      case LandGround():
+        verticalVelocity = 0;
       case MoveLeft():
         playerDirection = PlayerDirection.left;
         isFacingRight = false;
@@ -37,6 +49,7 @@ sealed class PlayerModel {
         isFacingRight = true;
       case MoveStop():
         playerDirection = PlayerDirection.none;
+
       case Jump():
     }
   }
@@ -56,8 +69,9 @@ class MaskDude extends PlayerModel {
 }
 
 extension PlayerModelEx on PlayerModel {
+  bool get isFalling => verticalVelocity > 0;
 
-  double get currentHorizonSpeed {
+  double get horizonVelocity {
     switch (playerDirection) {
       case PlayerDirection.left:
         return -1 * moveSpeed;
@@ -67,7 +81,7 @@ extension PlayerModelEx on PlayerModel {
         return 0;
     }
   }
-  
+
   PlayerAnimationState get currentAnimationState {
     if (playerDirection == PlayerDirection.none) {
       return PlayerAnimationState.idle;

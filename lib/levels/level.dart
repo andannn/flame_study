@@ -24,12 +24,6 @@ class Level extends World {
     final playerSpawnPoint = spawnPointsLayerObjects.firstWhere(
       (e) => e.class_ == 'Player',
     );
-    add(
-      PlayerComponent(
-        player: playerModel,
-        position: Vector2(playerSpawnPoint.x, playerSpawnPoint.y),
-      ),
-    );
 
     final collisionsLayerObjects =
         level.tileMap.getLayer<ObjectGroup>("Collisions")?.objects ?? [];
@@ -51,6 +45,13 @@ class Level extends World {
       ),
     );
     addAll(platformBlocks);
+    add(
+      PlayerComponent(
+        player: playerModel,
+        collisionBlocks: [...platformBlocks, ...solidBlocks],
+        position: Vector2(playerSpawnPoint.x, playerSpawnPoint.y),
+      ),
+    );
 
     return super.onLoad();
   }

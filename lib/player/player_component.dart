@@ -1,23 +1,31 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flame/components.dart';
+import 'package:flame_study/collisions/collision_block.dart';
 import 'package:flame_study/pixel_adventure.dart';
 import 'package:flame_study/player/model/player_model.dart';
 import 'package:flame_study/player/model/player_resource_model.dart';
+import 'package:flame_study/util/position_util.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-
 
 class PlayerComponent
     extends SpriteAnimationGroupComponent<PlayerAnimationState>
     with HasGameRef<PixelAdventure>, KeyboardHandler {
-  PlayerComponent({Vector2? position, required this.player})
-      : super(position: position);
+  PlayerComponent({
+    Vector2? position,
+    required this.player,
+    required this.collisionBlocks,
+  }) : super(position: position) {
+    debugMode = kDebugMode;
+  }
 
   final PlayerModel player;
+  final List<CollisionBlock> collisionBlocks;
   late final SpriteAnimation idleAnimation;
   late final SpriteAnimation runningAnimation;
 
-  double moveSpeed = 180;
   Vector2 velocity = Vector2.zero();
 
   @override
@@ -28,7 +36,22 @@ class PlayerComponent
   @override
   void update(double dt) {
     super.update(dt);
-    _updatePlayerByModel(dt);
+    // apply gravity every dt.
+    player.onEvent(ApplyGravity());
+
+    // Update x.
+    position.x += player.horizonVelocity * dt;
+
+    // resolve x position by checking collisions.
+    _resolveHorizontalPosition();
+
+    // Update y.
+    position.y += player.verticalVelocity * dt;
+
+    // resolve y position by checking collisions.
+    _resolveVerticalPosition();
+
+    _updatePlayeAnimationState(dt);
   }
 
   @override
@@ -55,12 +78,7 @@ class PlayerComponent
     current = player.currentAnimationState;
   }
 
-  var isFacingRight = true;
-
-  void _updatePlayerByModel(double dt) {
-    final horizontalSpeed = player.currentHorizonSpeed;
-    position.x += horizontalSpeed * dt;
-
+  void _updatePlayeAnimationState(double dt) {
     final animation = player.currentAnimationState;
     current = animation;
 
@@ -69,5 +87,38 @@ class PlayerComponent
     }
   }
 
+  void _resolveHorizontalPosition() {
+    final block = _detectOverlappedSolidCollision();
+
+    if (block == null) return;
+
+    if (player.playerDirection == PlayerDirection.right) {
+      position.x = block.left - width;
+    }
+
+    if (player.playerDirection == PlayerDirection.left) {
+      position.x = block.right + width ;
+    }
+  }
+
+  void _resolveVerticalPosition() {
+    final block = _detectOverlappedSolidCollision();
+
+    if (block == null) return;
+
+    if (player.isFalling) {
+      player.onEvent(LandGround());
+
+      position.y = block.y - height;
+    }
+  }
+
   bool _isCurrentFacingRight() => scale.x > 0;
+
+  CollisionBlock? _detectOverlappedSolidCollision() {
+    return collisionBlocks
+            .where((element) => !element.isPlatform)
+            .firstWhereOrNull((block) => rect.overlaps(block.rect));
+  }
+
 }

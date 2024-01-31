@@ -28,8 +28,8 @@
 24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24
 </data>
  </layer>
- <objectgroup id="2" name="Spawnpoints" visible="0">
-  <object id="2" name="Player" type="Player" x="144" y="240" width="31.4557" height="32" rotation="359.869"/>
+ <objectgroup id="2" name="Spawnpoints">
+  <object id="2" name="Player" type="Player" x="256" y="272" width="31.4557" height="32" rotation="359.869"/>
  </objectgroup>
  <objectgroup id="3" name="Collisions">
   <object id="13" type="soild" x="32" y="48" width="16" height="288"/>
