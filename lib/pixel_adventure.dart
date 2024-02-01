@@ -6,6 +6,7 @@ import 'package:flame/game.dart';
 import 'package:flame/widgets.dart';
 import 'package:flame_study/levels/level.dart';
 import 'package:flame_study/player/model/player_model.dart';
+import 'package:flame_study/util/logger.dart';
 
 class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents {
   late final CameraComponent cam;
@@ -16,6 +17,7 @@ class PixelAdventure extends FlameGame with HasKeyboardHandlerComponents {
     // load all images to cache.
     await images.loadAllImages();
 
+    logger.d('size $size');
     cam = CameraComponent.withFixedResolution(
         world: level, width: 640, height: 360);
 

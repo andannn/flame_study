@@ -2,6 +2,9 @@
 <map version="1.10" tiledversion="git" orientation="orthogonal" renderorder="right-down" width="40" height="23" tilewidth="16" tileheight="16" infinite="0" nextlayerid="4" nextobjectid="32">
  <tileset firstgid="1" source="pixel_advenure.tsx"/>
  <layer id="1" name="BackGround" width="40" height="23">
+  <properties>
+   <property name="BackgroundColor" value="Gray"/>
+  </properties>
   <data encoding="csv">
 24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,
 24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,
@@ -28,7 +31,7 @@
 24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24
 </data>
  </layer>
- <objectgroup id="2" name="Spawnpoints" visible="0">
+ <objectgroup id="2" name="Spawnpoints">
   <object id="2" name="Player" type="Player" x="256" y="272" width="31.4557" height="32" rotation="359.869"/>
  </objectgroup>
  <objectgroup id="3" name="Collisions">
