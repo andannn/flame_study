@@ -19,4 +19,8 @@ extension PositionComponentEx on PositionComponent {
   double get left => scale.x > 0 ? position.x : position.x - width;
 
   double get right => scale.x > 0 ? position.x + width : position.x;
+
+  double get top => position.y;
+
+  double get bottom => position.y + height;
 }

@@ -62,7 +62,8 @@ class PlayerComponent
     final isRightKeyPressed = keysPressed.contains(LogicalKeyboardKey.keyD) ||
         keysPressed.contains(LogicalKeyboardKey.arrowRight);
 
-    final isJumpPressed = keysPressed.contains(LogicalKeyboardKey.space) && event.repeat == false;
+    final isJumpPressed =
+        keysPressed.contains(LogicalKeyboardKey.space) && event.repeat == false;
 
     if (isLeftKeyPressed) {
       player.onEvent(MoveLeft());
@@ -98,23 +99,33 @@ class PlayerComponent
     }
 
     if (player.playerDirection == PlayerDirection.left) {
-      position.x = block.right + width ;
+      position.x = block.right + width;
     }
   }
 
   void _resolveVerticalPosition() {
-    final block = _detectOverlappedSolidCollision();
+    final solid = _detectOverlappedSolidCollision();
 
-    if (block == null) return;
+    if (solid != null) {
+      if (player.isFalling) {
+        player.onEvent(LandGround());
 
-    if (player.isFalling) {
-      player.onEvent(LandGround());
+        position.y = solid.y - height;
+      } else if (player.isRising) {
+        player.onEvent(ReachCeiling());
 
-      position.y = block.y - height;
-    } else if (player.isRising) {
-      player.onEvent(ReachCeiling());
+        position.y = solid.y + solid.height;
+      }
+    }
 
-      position.y = block.y + block.height;
+    final platform = _detectOverlappedPlatformCollision();
+
+    if (platform != null) {
+      if (player.isFalling) {
+        player.onEvent(LandGround());
+
+        position.y = platform.y - height;
+      }
     }
   }
 
@@ -122,8 +133,23 @@ class PlayerComponent
 
   CollisionBlock? _detectOverlappedSolidCollision() {
     return collisionBlocks
-            .where((element) => !element.isPlatform)
-            .firstWhereOrNull((block) => rect.overlaps(block.rect));
+        .where((element) => !element.isPlatform)
+        .firstWhereOrNull((block) => rect.overlaps(block.rect));
   }
 
+  CollisionBlock? _detectOverlappedPlatformCollision() {
+    return collisionBlocks
+        .where((element) => element.isPlatform)
+        .firstWhereOrNull((block) {
+      if (!rect.overlaps(block.rect)) {
+        return false;
+      }
+
+      if (bottom <= block.bottom && bottom >= block.top) {
+        return true;
+      }
+
+      return false;
+    });
+  }
 }
